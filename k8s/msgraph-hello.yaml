@@ -1,0 +1,68 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: msgraph-hello-svc
+  annotations:
+    getambassador.io/config: |
+      ---
+      apiVersion:  ambassador/v1
+      kind:  Mapping
+      prefix: /sap/c4c/api/v1/msgraph-hello
+      rewrite: ""
+      name:  msgraph_hello_svc_mapping
+      service:  https://msgraph-hello-svc:8080
+      timeout_ms: 50000
+      tls:   istio-upstream
+      add_response_headers:
+        Strict-Transport-Security: max-age=63072000; includeSubDomains
+        Content-Security-Policy: default-src 'self' *.cxm-salescloud.com *.hana.ondemand.com; style-src 'self' 'unsafe-inline' *.cxm-salescloud.com *.hana.ondemand.com; img-src 'self' *.cxm-salescloud.com *.hana.ondemand.com
+      cors:
+        origins: "*"
+        methods: POST, GET, OPTIONS, PUT
+        headers: Authorization, Content-Type, Cookie, x-sap-crm-token, x-idempotency-id, x-sap-crm-odata-token, x-sap-crm-iana-timezone, x-sap-crm-locale
+        credentials: false
+        max_age: "86400"
+
+spec:
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 3000
+  selector:
+      app: msteams-hello
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: msgraph-hello
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: msteams-hello
+  template:
+    metadata:
+      labels:
+        app: msteams-hello
+    spec:
+      containers:
+        - image: cxm-dev.common.repositories.cloud.sap/cxm/msgraph-hello
+          name: msgraph-hello
+          env:
+            - name: IAM_SERVICE_URL
+              value: iam-service-svc:50051
+            - name: SECURESTORE_SERVICE_URL
+              value: securestore-svc:50051
+            - name: NODE_ENV
+              value: production
+            - name: port
+              value: "3000"
+            - name: accessTokenURL
+              value: /api/v1/consent/token
+            - name: clientId
+              value: fd4f201f-6238-4355-a00b-16ccec543f2b
+            - name: teamsAppId
+              value: 4f2c0a7d-6ab9-4594-b2b6-bec7ccd7d0e6
+      imagePullSecrets:
+        - name: cxm-dev 
