@@ -1,0 +1,1 @@
+{"version":3,"file":"socketioprovider.js","sourceRoot":"","sources":["../../src/chat/socketioprovider.ts"],"names":[],"mappings":";;;AAEa,QAAA,SAAS,GAAG,WAAW,CAAC;AAExB,QAAA,gBAAgB,GAAG;IAC9B,OAAO,EAAE,iBAAS;IAClB,UAAU,EAAE,GAAG,EAAE;QAEf,OAAO,IAAI,CAAC;IACd,CAAC;CACF,CAAC"}

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>NestJS WebSocket Chat</title>
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+</head>
+<body>
+    <h1>NestJS WebSocket Chat</h1>
+    <input type="text" id="messageInput" placeholder="Type your message">
+    <button id="sendButton">Send</button>
+    <div id="messages"></div>
+
+    <script>
+        //const socket = io('https:ns-staging.cxm-salescloud.com/sap/c4c/api/v1/msgraph-service/msteamsocket',{transports:['WebSocket','']}); // Connect to your NestJS server port
+        const socket = io('http://localhost://3500/sap/c4c/api/v1/msgraph-service/msteamsocket/',
+{
+           // transports: ['websocket', 'polling'], // Prefer WebSocket
+            upgrade: true, // Allow upgrade from polling to WebSocket
+            //path: SOCKET_PATH, // Ensure this matches the server-side configuration and Ambassador's path rewriting
+            autoConnect: true,
+            reconnectionAttempts: 5,
+            reconnectionDelay: 1000,
+            rejectUnauthorized: false,
+            query:{
+              email: "ajitsahu@sapcxdev.onmicrosoft.com"
+            },
+            extraHeaders: {
+               Authorization: 'Bearer eyJraWQiOiJiZDVmMmM0Yy0zMWU4LTExZjAtYmUzOC1kNWQ1YWJkNTM3MGUiLCJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJjb20uc2FwLmNybS5pYW0iLCJleHAiOjE3NTA2NTkzMTksInN1YiI6IkFOQU5ELkIiLCJhdWQiOiJuc2QxLWRldi5jeG0tc2FsZXNjbG91ZC5jb20iLCJydHYiOjg2NDAwLCJub24iOiI3SGdWaW5mbEpNUVdDMFlnanV6QXVFdnc0QmsiLCJ6aWQiOiI1ZGExMDQ4N2JjYjBhOTc2ODQzYTA4ZDAiLCJzcGlkIjoiY2Q3NGEzMTctYjcwNy0xMWVjLWJiMDctNmZhOTIzNjI4NjQzIiwiYWlkIjoibnNkMSIsInVpZCI6ImNkNzRhMzE3LWI3MDctMTFlYy1iYjA3LTZmYTkyMzYyODY0MyIsImM0YyI6ZmFsc2UsImxvY2FsZSI6ImVuLVVTIiwibGFuZ3VhZ2UiOiJlbiIsImVpZCI6IjExZWNiNzA3LWFkNzItYjA2ZS1hZmRiLTgxNWYxNmE4YzAwMCIsInR5cCI6IjEiLCJhZG1pbiI6dHJ1ZSwidXR5IjoiVVNFUiIsImxvZyI6MX0.X8WtRlg9S8Y8EwjHXlG401cy0YWPEK_gW1Pmj-g1mIew3oNC31fh-8LRIKxOSMqH4OyiSQmDAqAJ9OcJI5n0JxfPgZHEoNxROo_-rBi7E1136Sj8hWpuxv1fC7WXZwSSoknnrWfGH0Q1lmfGsuZ9iuetAGTXYCQNzxKKxb163JKk5v51W2NljoMwNows5a6M9eGhB2xR9FMckJCx6_VzT5pCLIBItnzqwyEUxPV-WXdWq3h69YG0nKR9AGQjiOHOYjwi5UOoJpbfy13k4rQWAoR0jwvDNbhwCFkrxLhLYakoqECay8Nf0ekBXAgT2TqkYPpDkgntHrPZ6raLkEjwgQ'},
+            auth: {
+               token : 'eyJraWQiOiJiZDVmMmM0Yy0zMWU4LTExZjAtYmUzOC1kNWQ1YWJkNTM3MGUiLCJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJjb20uc2FwLmNybS5pYW0iLCJleHAiOjE3NTA2NTkzMTksInN1YiI6IkFOQU5ELkIiLCJhdWQiOiJuc2QxLWRldi5jeG0tc2FsZXNjbG91ZC5jb20iLCJydHYiOjg2NDAwLCJub24iOiI3SGdWaW5mbEpNUVdDMFlnanV6QXVFdnc0QmsiLCJ6aWQiOiI1ZGExMDQ4N2JjYjBhOTc2ODQzYTA4ZDAiLCJzcGlkIjoiY2Q3NGEzMTctYjcwNy0xMWVjLWJiMDctNmZhOTIzNjI4NjQzIiwiYWlkIjoibnNkMSIsInVpZCI6ImNkNzRhMzE3LWI3MDctMTFlYy1iYjA3LTZmYTkyMzYyODY0MyIsImM0YyI6ZmFsc2UsImxvY2FsZSI6ImVuLVVTIiwibGFuZ3VhZ2UiOiJlbiIsImVpZCI6IjExZWNiNzA3LWFkNzItYjA2ZS1hZmRiLTgxNWYxNmE4YzAwMCIsInR5cCI6IjEiLCJhZG1pbiI6dHJ1ZSwidXR5IjoiVVNFUiIsImxvZyI6MX0.X8WtRlg9S8Y8EwjHXlG401cy0YWPEK_gW1Pmj-g1mIew3oNC31fh-8LRIKxOSMqH4OyiSQmDAqAJ9OcJI5n0JxfPgZHEoNxROo_-rBi7E1136Sj8hWpuxv1fC7WXZwSSoknnrWfGH0Q1lmfGsuZ9iuetAGTXYCQNzxKKxb163JKk5v51W2NljoMwNows5a6M9eGhB2xR9FMckJCx6_VzT5pCLIBItnzqwyEUxPV-WXdWq3h69YG0nKR9AGQjiOHOYjwi5UOoJpbfy13k4rQWAoR0jwvDNbhwCFkrxLhLYakoqECay8Nf0ekBXAgT2TqkYPpDkgntHrPZ6raLkEjwgQ'   }
+          });
+        // Connect to your NestJS server port
+
+        const messageInput = document.getElementById('messageInput');
+        const sendButton = document.getElementById('sendButton');
+        const messagesDiv = document.getElementById('messages');
+
+        socket.on('connect', () => {
+            messagesDiv.innerHTML += `<p>Connected to server! Your ID: ${socket.id}</p>`;
+        });
+
+        socket.on('message', (data) => {
+            messagesDiv.innerHTML += `<p>${data}</p>`;
+        });
+
+        socket.on('message_received', (data) => {
+            messagesDiv.innerHTML += `<p style="color: green;">Server Acknowledgment: ${data}</p>`;
+        });
+
+        socket.on('roomJoined', (data) => {
+            messagesDiv.innerHTML += `<p style="color: blue;">${data}</p>`;
+        });
+
+        sendButton.addEventListener('click', () => {
+            const message = messageInput.value;
+            if (message) {
+                socket.emit('message', message);
+                messageInput.value = '';
+            }
+        });
+
+        // Example of joining a room
+        setTimeout(() => {
+            socket.emit('joinRoom', 'general');
+        }, 2000);
+
+    </script>
+</body>
+</html>
