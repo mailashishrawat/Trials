@@ -1,0 +1,13 @@
+apiVersion: skaffold/v2beta26
+kind: Config
+metadata:
+  name: chat-server-socket
+build:
+  artifacts:
+  - image: cxm-dev.common.repositories.cloud.sap/cxm/msteams/mschat
+    docker:
+      dockerfile: Dockerfile
+deploy:
+  kubectl:
+    manifests:
+    - k8s/mschat-service-dev2.yaml

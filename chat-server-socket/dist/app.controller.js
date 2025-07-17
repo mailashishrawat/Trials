@@ -22,6 +22,15 @@ let AppController = class AppController {
     getHello() {
         return this.appService.getHello();
     }
+    getSocket() {
+        return this.appService.getSocket();
+    }
+    getReadiness() {
+        return true;
+    }
+    getliveness() {
+        return true;
+    }
     async getAppointment() {
         return this.appService.getAppointment();
     }
@@ -46,6 +55,24 @@ __decorate([
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", String)
 ], AppController.prototype, "getHello", null);
+__decorate([
+    (0, common_1.Get)('/mschat'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", String)
+], AppController.prototype, "getSocket", null);
+__decorate([
+    (0, common_1.Get)('/health/readiness'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Boolean)
+], AppController.prototype, "getReadiness", null);
+__decorate([
+    (0, common_1.Get)('/health/liveness'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Boolean)
+], AppController.prototype, "getliveness", null);
 __decorate([
     (0, common_1.Get)('appointment'),
     __metadata("design:type", Function),

@@ -1,10 +1,5 @@
 import { OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-export declare class SocketHelper {
-    private logger;
-    constructor();
-    static setup(server: Server): void;
-}
 export declare class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
     private logger;
     server: Server;

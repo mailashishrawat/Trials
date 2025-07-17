@@ -14,7 +14,7 @@ let ChatModule = class ChatModule {
 ChatModule = __decorate([
     (0, common_1.Module)({
         imports: [],
-        providers: [chat_gateway_1.SocketHelper, chat_gateway_1.ChatGateway],
+        providers: [chat_gateway_1.ChatGateway],
         exports: [],
     })
 ], ChatModule);

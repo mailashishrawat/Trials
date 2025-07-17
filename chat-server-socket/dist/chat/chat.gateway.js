@@ -12,29 +12,11 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ChatGateway = exports.SocketHelper = void 0;
+exports.ChatGateway = void 0;
 const websockets_1 = require("@nestjs/websockets");
 const socket_io_1 = require("socket.io");
 const common_1 = require("@nestjs/common");
 console.log('--- Gateway file loaded ---');
-class SocketHelper {
-    constructor() {
-        this.logger = new common_1.Logger('ChatGateway');
-        this.logger.log('ChatGateway constructor called');
-    }
-    static setup(server) {
-        server === null || server === void 0 ? void 0 : server.on('connection', (socket) => {
-            console.log(`New client connected: ${socket.id}`);
-            socket.on('disconnect', () => {
-                console.log('user disconnected');
-            });
-            socket.on('message', (msg) => {
-                console.log('message: ' + msg.text.toString());
-            });
-        });
-    }
-}
-exports.SocketHelper = SocketHelper;
 let ChatGateway = class ChatGateway {
     constructor() {
         this.logger = new common_1.Logger('ChatGateway');

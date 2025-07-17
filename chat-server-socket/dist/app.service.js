@@ -13,6 +13,9 @@ let AppService = class AppService {
     getHello() {
         return 'Hello World!';
     }
+    getSocket() {
+        return 'Attempting socket all the best !';
+    }
     gettimezone(timezone, offset) {
         console.log(offset);
         const input = "2025-06-13T00:00:00.123Z";

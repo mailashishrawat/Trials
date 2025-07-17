@@ -1,0 +1,12 @@
+---
+applications:
+- name: mschatclient-dev
+  memory: 256M
+  command: null
+  path: dist/chatclient
+  routes:
+  - route: mschatclient-dev.cfapps.eu10.hana.ondemand.com
+  buildpack: staticfile_buildpack
+  env:
+    BUILD_NUMBER: 1
+    GIT_COMMIT: 0

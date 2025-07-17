@@ -7,6 +7,11 @@ export class AppService {
   getHello(): string {
     return 'Hello World!';
   }
+
+  getSocket(): string {
+    return 'Attempting socket all the best !';
+  }
+  
    gettimezone(timezone:string, offset: number ): string
   {
     console.log(offset)

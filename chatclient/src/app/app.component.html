@@ -1,16 +1,29 @@
 <main class="main">
   <div class="chat-container">
+
+    <form class="connect-form" (ngSubmit)="connectSocket()" >
+      <input type="text" [(ngModel)]="url" name="url" placeholder="Server URL" required />
+      <input type="text" [(ngModel)]="token" name="token" placeholder="Token" required />
+            <input type="text" [(ngModel)]="path" name="path" placeholder="path" required />
+                  <input type="text" [(ngModel)]="transportype" name="transportype" placeholder="transportype" required />
+      <button type="submit">Connect</button>
+    </form>
+    
+    <div class="connection-status" [ngClass]="{'connected': connected, 'not-connected': !connected}">
+      Status: {{ connected ? 'Connected' : 'Not Connected' }}
+    </div>
     <h2>Chat Room</h2>
 
     <!-- Display messages -->
     <div class="chat-messages">
       {{messages.length === 0 ? 'No messages yet.' : ''}}
-      <div *ngFor="let msg of messages" class="chat-message">
+      <div *ngFor="let msg of messages" 
+           class="chat-message" 
+           [ngClass]="{'server-message': msg.origin === originType.Server}">
         <span class="chat-user">User:</span>
-        <span class="chat-text">{{ msg }}</span>
+        <span class="chat-text">{{ msg.text || msg }}</span>
       </div>
     </div>
-
     <!-- Input form -->
     <div class="chat-form">
       <input

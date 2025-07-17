@@ -1,0 +1,133 @@
+apiVersion:  getambassador.io/v3alpha1
+kind:  Mapping
+metadata:
+  name:  mschat-service-svc-mapping
+spec:
+  host: "*"
+  prefix: /sap/c4c/api/v1/mschat-service
+  rewrite: ""
+  service: mschat-service-svc:8080
+  timeout_ms: 100000
+  tls:   istio-upstream  
+  add_response_headers:
+    Strict-Transport-Security: 
+      value: max-age=63072000; includeSubDomains
+    Content-Security-Policy: 
+      value: default-src 'self' *.cxm-salescloud.com *.hana.ondemand.com; style-src 'self' 'unsafe-inline' *.cxm-salescloud.com *.hana.ondemand.com; img-src 'self' *.cxm-salescloud.com *.hana.ondemand.com
+  cors:
+    origins: ["*"]
+    methods: [POST, GET, OPTIONS, PUT]
+    headers: [Authorization, Content-Type, Cookie, x-sap-crm-token, x-idempotency-id, x-sap-crm-odata-token, x-sap-crm-iana-timezone, x-sap-crm-locale]
+    credentials: false
+    max_age: "86400"
+---
+apiVersion:  getambassador.io/v3alpha1
+kind:  Mapping
+metadata:
+  name:  socketio-mappingxx
+spec:
+  host: "*"
+  prefix: /sap/c4c/api/v1/mschat-service/mschat/
+  rewrite: /sap/c4c/api/v1/mschat-service/mschat/
+  service: mschat-service-svc:8080
+  allow_upgrade:
+    - websocket
+  load_balancer:
+    policy: ring_hash
+    source_ip: true
+  tls:   istio-upstream
+  timeout_ms: 100000
+  cors:
+    origins: ["*"]
+    methods: [POST, GET, OPTIONS, PUT]
+    headers: [Authorization, Content-Type, Cookie, x-sap-crm-token, x-idempotency-id, x-sap-crm-odata-token, x-sap-crm-iana-timezone, x-sap-crm-locale]
+    credentials: false
+    max_age: "86400"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mschat-service-svc
+spec:
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 48961
+    - name: grpc
+      port: 50051
+      targetPort: 50051
+  selector:
+      app: mschat
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mschat-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mschat
+  template:
+    metadata:
+      labels:
+        app: mschat
+    spec:
+      containers:
+        - image: cxm-dev.common.repositories.cloud.sap/cxm/msteams/mschat:latest
+          name: mschat-service
+          ports:
+            - containerPort: 48961
+            - containerPort: 50051
+          env:
+            - name: NODE_ENV
+              value: production
+            - name: port
+              value: "48961"
+            - name: TEAMS_APP_ID
+              value: 29d59aa7-28cf-4460-a6be-918f4557e420
+            - name: TEAMS_UI_BASE_URL
+              value: https://stage.cxm-salescloud.com/teams/sandbox/index.html#/tab
+            - name: IAM_SERVICE_HOST
+              value: iam-new-service-svc
+            - name: IAM_SERVICE_GRPC_PORT
+              value: "50051"
+            - name: SECURESTORE_SERVICE_HOST
+              value: securestore-svc
+            - name: SECURESTORE_SERVICE_GRPC_PORT
+              value: "50051"
+            - name: MSAUTH_SERVICE_HOST
+              value: msauth-service-svc.default.svc.cluster.local
+            - name: MSAUTH_SERVICE_GRPC_PORT
+              value: "50051"
+            - name: ELSA_SERVICE_HOST
+              value: elsa-grpc-svc
+            - name: ELSA_SERVICE_GRPC_PORT
+              value: "50051"
+            - name: mschat_SERVICE_HOST
+              value: "0.0.0.0"
+            - name: mschat_SERVICE_GRPC_PORT
+              value: "50051"
+            - name: EVENT_SERVICE_HOST
+              value: event-service-svc
+            - name: EVENT_SERVICE_GRPC_PORT
+              value: "50051"
+            - name: version
+              value: "22"
+          readinessProbe:
+            httpGet:
+              path: /sap/c4c/api/v1/mschat-service/health/readiness
+              port: 48961
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            failureThreshold: 12
+          livenessProbe:
+            httpGet:
+              path: /sap/c4c/api/v1/mschat-service/health/liveness
+              port: 48961
+            initialDelaySeconds: 10
+            periodSeconds: 15
+            failureThreshold: 6
+      imagePullSecrets:
+        - name: cxm-dev

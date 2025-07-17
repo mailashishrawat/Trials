@@ -11,7 +11,6 @@ import {
 import { Server, Socket } from 'socket.io';
 import { Logger } from '@nestjs/common';
 console.log('--- Gateway file loaded ---');
-import { SOCKET_IO } from './socketioprovider';
 import { Inject, Injectable } from '@nestjs/common';
 // @WebSocketGateway decorator defines this class as a WebSocket gateway.
 // It listens for WebSocket connections.
@@ -24,27 +23,7 @@ import { Inject, Injectable } from '@nestjs/common';
 //   credentials: true,
 // },})
 
-export class SocketHelper {
 
-  private logger: Logger = new Logger('ChatGateway');
-
-  constructor() {
-    this.logger.log('ChatGateway constructor called');
-  }
-
-  public static setup(server: Server) {
-    server?.on('connection', (socket) => {
-      console.log(`New client connected: ${socket.id}`);
-      socket.on('disconnect', () => {
-        console.log('user disconnected');
-    });
-    socket.on('message', (msg) => {
-        console.log('message: ' + msg.text.toString());
-      });
-   })
-  }
-
-}
 
 @WebSocketGateway(  { cors: {
   origin: '*',

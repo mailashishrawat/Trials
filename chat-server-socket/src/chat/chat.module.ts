@@ -1,12 +1,11 @@
 
 // src/chat/chat.module.ts
 import { Logger, Module } from '@nestjs/common';
-import { ChatGateway, SocketHelper } from './chat.gateway';
-import { SOCKET_IO, socketIoProvider } from './socketioprovider';
+import { ChatGateway } from './chat.gateway';
 
 @Module({
   imports: [],
-  providers: [SocketHelper, ChatGateway],
+  providers: [ ChatGateway],
   exports: [],
 })
 export class ChatModule {}
