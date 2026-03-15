@@ -9,7 +9,15 @@ import { SocketHelper } from './SocketHelper'
 import { IoAdapter } from '@nestjs/platform-socket.io';
 async function bootstrap() {
   const logger: Logger = new Logger('main');
-  const app = await NestFactory.create(AppModule, {cors:true, logger:['log','error','warn','debug','verbose']});
+  const app = await NestFactory.create(AppModule, {cors:{
+    origin: '*.hana.ondemand.com', // ✅ Allow your Angular app
+    methods: ['GET', 'POST','OPTIONS'],
+    credentials: true,
+    optionsSuccessStatus:204,
+    allowedHeaders: ["*"]
+  }, logger:['log','error','warn','debug','verbose']});
+  
+
   const port =process.env.port || '8080'
   const GLOBAL_PREFIX = '/sap/c4c/api/v1/mschat-service';
   app.setGlobalPrefix(GLOBAL_PREFIX);
@@ -19,7 +27,7 @@ async function bootstrap() {
   logger.log(`version 4 WebSocket server is also running on the same port (${port})`);
    
   const io = new Server(app.getHttpServer(), {cors: {
-    origin: '*', // ✅ Allow your Angular app
+    origin: '*.hana.ondemand.com', // ✅ Allow your Angular app
     methods: ['GET', 'POST','OPTIONS'],
 
   },

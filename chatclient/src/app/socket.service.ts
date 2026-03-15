@@ -26,6 +26,7 @@ export class SocketService {
                   requestTimeout: 10000,
                   reconnectionAttempts: 3,
                   reconnectionDelay: 1000,
+                  withCredentials: true,
                  // rejectUnauthorized: false,
                   // query:{
                   //   email: "ajitsahu@sapcxdev.onmicrosoft.com"

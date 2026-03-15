@@ -9,7 +9,7 @@ npm run build
 docker image build -t cxm-dev.common.repositories.cloud.sap/cxm/msteams/mschat .
 Docker push cxm-dev.common.repositories.cloud.sap/cxm/msteams/mschat:latest  
 
-kubectl apply -f k8s/mschat-service-dev2.yaml
+kubectl apply -f k8s/mschat-service-dev3.yaml
 
 
 port fwd
